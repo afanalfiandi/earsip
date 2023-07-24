@@ -16,7 +16,6 @@ const Auth = () => {
         setTimeout(() => {
             auth(nip,password);
             setLoading(false);
-            navigation.navigate('Home');
         }, 3000);
     }
     return (

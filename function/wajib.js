@@ -22,6 +22,8 @@ const wajib = async (nip, jenisDokumen, uri, name, type) => {
         
         if (result != 1) {
             ToastAndroid.show("Gagal!", ToastAndroid.LONG);
+        } else {
+            ToastAndroid.show("Berhasil!", ToastAndroid.LONG);
         }
     } catch (error) {
         console.log('error upload', error);

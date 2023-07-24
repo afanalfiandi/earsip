@@ -67,6 +67,7 @@ const Wajib = () => {
         wajib(user.nip, jenisDokumen, uri, namaDoc, type);
         setTimeout(() => {
             setLoading(false);
+            getDocument();
             setModal(!modal);
         }, 3000);
     }
@@ -143,6 +144,7 @@ const Wajib = () => {
         setLoading(true);
         setTimeout(() => {
             deleteWajib(id, 'Wajib');
+            getDocument();
             setLoading(false);
         }, 3000);
     }
@@ -220,9 +222,19 @@ const Wajib = () => {
             </View>
 
             {!loading && data == null && (
-                <View style={[styles.centeredView, { justifyContent: 'center', alignItems: 'center' }]}>
-                    <Text>Tidak ada data</Text>
-                </View>
+                <ScrollView style={styles.content} refreshControl={
+                    <RefreshControl refreshing={loading} onRefresh={() => {
+                        setLoading(true);
+                        getDocument();
+                        setTimeout(() => {
+                            setLoading(false)
+                        }, 3000);
+                    }} />}
+                >
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text>Tidak ada data</Text>
+                    </View>
+                </ScrollView>
             )}
             {!loading && data != null && (
                 <ScrollView style={styles.content} refreshControl={
@@ -339,7 +351,7 @@ const styles = StyleSheet.create({
     content: {
         marginTop: Dimension.height * 0.03,
         paddingBottom: Dimension.height * 0.06,
-        paddingTop: 10
+        paddingTop: 10,
     },
     itemContainer: {
         marginBottom: 15,

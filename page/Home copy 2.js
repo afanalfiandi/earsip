@@ -35,6 +35,7 @@ const Home = () => {
     const user = JSON.parse(await AsyncStorage.getItem('userSession'));
     setUserData(user);
 
+    console.log(userData);
   }
 
   const getTotal = async () => {
@@ -76,8 +77,8 @@ const Home = () => {
     React.useCallback(() => {
       getUser();
       setLoading(true);
-      getTerbaru();
-      getTotal();
+      // getTerbaru();
+      // getTotal();
       setTimeout(() => {
         setLoading(false);
       }, 1500);
@@ -127,12 +128,12 @@ const Home = () => {
       {!loading && (
         <View>
           <View style={styles.header}>
-            <Text style={styles.greetings}>Halo,{'\n'}{userData.nama}</Text>
+            <Text style={styles.greetings}>Halo,{'\n'}{userData.nip}</Text>
 
             <TouchableOpacity style={styles.profileBtn} onPress={() => {
               navigation.navigate('Profile');
             }}>
-              <Image style={styles.profileImg} source={{ uri: uri + 'img/' + userData.img }} />
+              <Image style={styles.profileImg} source={require('../assets/img/user-default.png')} />
             </TouchableOpacity>
           </View>
           <View style={styles.row}>
@@ -245,7 +246,6 @@ const styles = StyleSheet.create({
   profileImg: {
     width: '100%',
     height: '100%',
-    borderRadius: 100
   },
   greetings: {
     fontWeight: 'bold',

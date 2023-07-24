@@ -17,17 +17,18 @@ const auth = async (nip, password) => {
             password: password
         })
     }).then((res) => res.json())
-        .then((resp) => {
+        .then(async (resp) => {
             if (resp != 0) {
                 AsyncStorage.setItem('userSession', JSON.stringify(resp));
                 AsyncStorage.setItem('loggedIn', 'true');
                 RootNavigation.navigate('Home');
+
+                // console.log(await AsyncStorage.getItem('userSession'));
             } else {
                 ToastAndroid.show("NIP atau kata sandi salah", ToastAndroid.LONG);
             }
         }).catch((e) => {
-            console.log(e);
-            // ToastAndroid.show("Koneksi bermasalah!", ToastAndroid.LONG);
+            ToastAndroid.show("Koneksi bermasalah!", ToastAndroid.LONG);
         })
 }
 export default auth

@@ -41,9 +41,9 @@ const Pribadi = () => {
         const user = JSON.parse(await AsyncStorage.getItem('userSession'));
         setLoading(true);
         pribadi(user.nip, namaFile, uri, namaDoc, type);
-        getDocument();
         setTimeout(() => {
             setLoading(false);
+            getDocument();
             setModal(!modal);
         }, 3000);
     }
@@ -98,6 +98,7 @@ const Pribadi = () => {
         setLoading(true);
         setTimeout(() => {
             deletePribadi(id, 'Pribadi');
+            getDocument();
             setLoading(false);
         }, 3000);
 
@@ -159,9 +160,19 @@ const Pribadi = () => {
                 </TouchableOpacity>
             </View>
             {!loading && data == null && (
-                <View style={[styles.centeredView, { justifyContent: 'center', alignItems: 'center' }]}>
-                    <Text>Tidak ada data</Text>
-                </View>
+                <ScrollView style={styles.content} refreshControl={
+                    <RefreshControl refreshing={loading} onRefresh={() => {
+                        setLoading(true)
+                        getDocument();
+                        setTimeout(() => {
+                            setLoading(false)
+                        }, 3000);
+                    }} />}
+                >
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text>Tidak ada data</Text>
+                    </View>
+                </ScrollView>
             )}
             {!loading && data != null && (
                 <ScrollView style={styles.content} refreshControl={
