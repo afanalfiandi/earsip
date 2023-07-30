@@ -5,14 +5,14 @@ import { Dimension } from '../component/dimension';
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
-
+// 
 const SplashScreen = () => {
     const navigation = useNavigation();
     const navig = async () => {
         setTimeout(async () => {
             const intro = await AsyncStorage.getItem('intro');
             const loggedIn = await AsyncStorage.getItem('loggedIn');
-            
+
             if (loggedIn == 'true') {
                 navigation.navigate('Home')
             } else if (!loggedIn && intro != '1') {
@@ -25,6 +25,8 @@ const SplashScreen = () => {
     useEffect(() => {
         navig();
     }, [])
+
+// 
     return (
         <View style={styles.container}>
             <StatusBar
@@ -45,6 +47,7 @@ const SplashScreen = () => {
 
 export default SplashScreen
 
+// 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.light,

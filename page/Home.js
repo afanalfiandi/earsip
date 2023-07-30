@@ -31,10 +31,10 @@ const Home = () => {
     }
   );
   const [total, setTotal] = useState(0);
+  
   const getUser = async () => {
     const user = JSON.parse(await AsyncStorage.getItem('userSession'));
     setUserData(user);
-
   }
 
   const getTotal = async () => {
