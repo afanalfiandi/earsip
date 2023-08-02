@@ -3,7 +3,7 @@ import { baseUrl } from '../function/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RootNavigation from './navigationRef';
 
-const updateProfile = async (nip, nama, jabatan) => {
+const updateProfile = async (nip, nama, jabatan, jk, status, alamat) => {
     fetch(baseUrl + 'updateProfile', {
         method: 'POST',
         headers: {
@@ -14,6 +14,9 @@ const updateProfile = async (nip, nama, jabatan) => {
             nip: nip,
             nama: nama,
             jabatan: jabatan,
+            jk: jk,
+            status: status,
+            alamat: alamat
         })
     }).then((res) => res.json())
         .then((resp) => {

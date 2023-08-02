@@ -21,6 +21,7 @@ const Home = () => {
   const [refresh, setRefresh] = useState(Math.random());
   const [loading, setLoading] = useState();
   const [terbaru, setTerbaru] = useState([])
+  const [list, setListWajib] = useState([])
   const [userData, setUserData] = useState(
     {
       id_user: "1",
@@ -31,7 +32,7 @@ const Home = () => {
     }
   );
   const [total, setTotal] = useState(0);
-  
+
   const getUser = async () => {
     const user = JSON.parse(await AsyncStorage.getItem('userSession'));
     setUserData(user);
@@ -77,6 +78,7 @@ const Home = () => {
       getUser();
       setLoading(true);
       getTerbaru();
+      listWajib();
       getTotal();
       setTimeout(() => {
         setLoading(false);
@@ -112,6 +114,26 @@ const Home = () => {
     setTimeout(() => {
       getTerbaru();
     }, 1000);
+  }
+
+  const listWajib = async () => {
+    fetch(baseUrl + 'listWajib', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        nip: userData.nip,
+      })
+    }).then((res) => res.json())
+      .then((resp) => {
+        setListWajib(resp);
+        // console.log(resp);
+      }).catch((e) => {
+        console.log(e)
+        // ToastAndroid.show("Koneksi bermasalah!", ToastAndroid.LONG);
+      })
   }
   return (
     <View style={styles.container}>
@@ -176,7 +198,7 @@ const Home = () => {
               </View>
             </View>
           </View>
-          <ScrollView style={styles.content} refreshControl={
+          {/* <ScrollView style={styles.content} refreshControl={
             <RefreshControl refreshing={loading} onRefresh={() => {
               setLoading(true)
               setTimeout(() => {
@@ -215,6 +237,61 @@ const Home = () => {
                           }} text='Hapus' />
                         </MenuOptions>
                       </Menu>
+                    </View>
+                  </View>
+                )
+              })
+            )}
+          </ScrollView> */}
+
+          <ScrollView style={styles.content} refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={() => {
+              setLoading(true)
+              setTimeout(() => {
+                getTerbaru();
+                listWajib();
+                getTotal();
+                setLoading(false)
+              }, 3000);
+            }} />}>
+            <Text style={styles.h1}>Daftar Dokumen Wajib Anda</Text>
+            {list == null && (
+              <View style={{ justifyContent: 'center', alignItems: 'center', padding: 30 }}>
+                <Text>Tidak ada file list</Text>
+              </View>
+            )}
+            {list != null && (
+              list.map((item) => {
+                return (
+                  <View style={styles.itemContainer} key={item.id}>
+                    <View style={styles.contentImgContainer}>
+                      <Image source={require('../assets/img/file.png')} />
+                    </View>
+                    <View style={styles.contentTextContainer}>
+                      <Text style={[styles.cardTitle, { marginBottom: 2 }]}>{item.dokumen}</Text>
+                      {item.status == 100 && (
+                        <Text style={styles.cardText}>Belum diunggah</Text>
+                      )}
+                      {item.status != 100 && (
+                        <Text style={styles.cardText}>{item.status}</Text>
+                      )}
+                    </View>
+                    <View style={styles.contentBtnContainer}>
+                      {item.status == 100 && (
+                        <Image source={require('../assets/img/fold.png')} />
+                      )}
+
+                      {item.status == "Menunggu" && (
+                        <Image source={require('../assets/img/clock.png')} />
+                      )}
+
+                      {item.status == 'Disetujui' && (
+                        <Image source={require('../assets/img/check.png')} />
+                      )}
+
+                      {item.status == "Ditolak" && (
+                        <Image source={require('../assets/img/fold.png')} />
+                      )}
                     </View>
                   </View>
                 )

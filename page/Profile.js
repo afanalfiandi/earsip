@@ -11,6 +11,8 @@ import mime from 'mime';
 import { uri } from '../function/config';
 import updateProfile from '../function/profile';
 import updatePassword from '../function/password';
+import moment from 'moment'
+import 'moment/locale/id';
 
 const Profile = () => {
     const navigation = useNavigation();
@@ -25,25 +27,40 @@ const Profile = () => {
         }
     ])
 
+    const [dataStatus, setDataStatus] = useState([
+        {
+            id_status_karyawan_detail: "",
+            status_karyawan: ""
+        }
+    ])
+
     const [profile, setProfile] = useState(false);
     const [pass, setPass] = useState(false);
     const [jabatanLabel, setJabatanLabel] = useState();
+    const [jkLabel, setJkLabel] = useState();
+    const [statusLabel, setStatusLabel] = useState();
 
-    
+
     const [nip, setNip] = useState();
     const [nama, setNama] = useState();
+    const [tglPengangkatan, setTglPengangkatan] = useState();
     const [jabatan, setJabatan] = useState();
+    const [jk, setJK] = useState();
+    const [status, setStatus] = useState();
+    const [alamat, setAlamat] = useState();
 
-    const [lama,setLama]=useState();
-    const [baru,setBaru]=useState();
+    const [lama, setLama] = useState();
+    const [baru, setBaru] = useState();
 
 
     const [userData, setUserData] = useState({
-        id_user: '',
         nip: '',
         nama: '',
         img: '',
         jabatan: '',
+        jk: '',
+        status: '',
+        alamat: '',
     })
 
     const getUser = async () => {
@@ -64,7 +81,11 @@ const Profile = () => {
                 setUserData(responseJson);
                 setNip(responseJson.nip);
                 setNama(responseJson.nama);
-                setJabatanLabel(responseJson.jabatan)
+                setJabatanLabel(responseJson.jabatan);
+                setJkLabel(responseJson.jk);
+                setStatusLabel(responseJson.status);
+                setAlamat(responseJson.alamat);
+                setTglPengangkatan(responseJson.tgl_pengangkatan);
             })
             .catch((e) => {
                 console.log(e);
@@ -87,11 +108,29 @@ const Profile = () => {
                 console.log(e);
             })
     }
+
+    const getStatus = () => {
+        fetch(baseUrl + 'getStatus', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                setDataStatus(responseJson[0]);
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+    }
+
     useFocusEffect(
         React.useCallback(() => {
             setLoading(true);
             getUser();
             getJabatan();
+            getStatus();
             setTimeout(() => {
                 setLoading(false);
             }, 1500);
@@ -152,13 +191,18 @@ const Profile = () => {
         }
     }
     const [expanded, setExpanded] = useState(false);
+    const [expandedJK, setExpandedJK] = useState(false);
+    const [expandedStatus, setExpandedStatus] = useState(false);
 
     const handlePress = () => setExpanded(!expanded);
+    const jkPress = () => setExpandedJK(!expandedJK);
+    const statusPress = () => setExpandedStatus(!expandedStatus);
     const disable = () => { }
 
-    const onProfile = async () => { 
+    const onProfile = async () => {
         setLoading(true);
-        updateProfile(userData.nip, nama, jabatan);
+        updateProfile(userData.nip, nama, jabatan, jk, status, alamat);
+        console.log(alamat);
         setTimeout(() => {
             setProfile(false);
             setLoading(false)
@@ -221,8 +265,11 @@ const Profile = () => {
                             <TextInput value={nama} onChangeText={setNama} style={styles.input} editable={profile == true ? true : false} />
                         </View>
                         <View style={styles.formGroup}>
+                            <Text style={styles.label}>Tanggal Pengangkatan</Text>
+                            <TextInput value={moment(tglPengangkatan).format('dddd D MMMM YYYY')} onChangeText={setTglPengangkatan} style={styles.input} editable={false} />
+                        </View>
+                        <View style={styles.formGroup}>
                             <Text style={styles.label}>Jabatan</Text>
-                            {/* <TextInput value={jabatan} onChangeText={setJabatan} style={styles.input} editable={profile == true ? true : false} /> */}
                             <List.Section style={{ borderWidth: 1, borderRadius: 10, borderColor: '#D8D8D8' }}
                                 disabled={true}
                             >
@@ -245,12 +292,59 @@ const Profile = () => {
                             </List.Section>
                         </View>
                         <View style={styles.formGroup}>
+                            <Text style={styles.label}>Jenis Kelamin</Text>
+                            <List.Section style={{ borderWidth: 1, borderRadius: 10, borderColor: '#D8D8D8' }}>
+                                <List.Accordion
+                                    style={{ width: '100%', borderRadius: 10, backgroundColor: colors.light, opacity: profile ? 1 : 0.4 }}
+                                    title={jkLabel}
+                                    expanded={expandedJK}
+                                    onPress={profile == true ? jkPress : disable}
+                                >
+                                    <List.Item title={"Laki-laki"} onPress={() => {
+                                        setJK(1)
+                                        jkPress()
+                                    }}>
+                                    </List.Item>
+                                    <List.Item title={"Perempuan"} onPress={() => {
+                                        setJK(2)
+                                        jkPress()
+                                    }}>
+                                    </List.Item>
+                                </List.Accordion>
+                            </List.Section>
+                        </View>
+                        <View style={styles.formGroup}>
+                            <Text style={styles.label}>Status Karyawan</Text>
+                            <List.Section style={{ borderWidth: 1, borderRadius: 10, borderColor: '#D8D8D8' }}>
+                                <List.Accordion
+                                    style={{ width: '100%', borderRadius: 10, backgroundColor: colors.light, opacity: profile ? 1 : 0.4 }}
+                                    title={statusLabel}
+                                    expanded={expandedStatus}
+                                    onPress={profile == true ? statusPress : disable}
+                                >
+                                    {dataStatus.map((item) => {
+                                        return (
+                                            <List.Item title={item.status_karyawan} key={item.id_status_karyawan_detail} onPress={() => {
+                                                setStatus(item.id_status_karyawan_detail)
+                                                statusPress()
+                                            }}>
+                                            </List.Item>
+                                        )
+                                    })}
+                                </List.Accordion>
+                            </List.Section>
+                        </View>
+                        <View style={styles.formGroup}>
+                            <Text style={styles.label}>Alamat</Text>
+                            <TextInput value={alamat} onChangeText={setAlamat} style={[styles.input, {height: 120}]} editable={profile == true ? true : false} />
+                        </View>
+                        <View style={styles.formGroup}>
                             <TouchableOpacity style={[styles.btn, { opacity: profile == true ? 1 : 0.7 }]} disabled={profile == true ? false : true} onPress={onProfile}>
                                 <Text style={styles.txtBtn}>Ubah</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={[styles.row,{marginBottom:50}]}>
+                    <View style={[styles.row, { marginBottom: 50 }]}>
                         <View style={[styles.formGroup, { flexDirection: 'row', justifyContent: 'space-between' }]}>
                             <Text style={styles.formTitle}>Pengaturan Sandi</Text>
                             <TouchableOpacity style={styles.switchBtn} onPress={() => { setPass(!pass) }}>

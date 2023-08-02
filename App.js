@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { View, BackHandler, StyleSheet, Text, Image, StatusBar, Alert } from 'react-native';
+// route
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// end of route
 import { useFonts } from 'expo-font';
 import { MenuProvider } from 'react-native-popup-menu';
 import { navigationRef } from './function/navigationRef';
@@ -14,7 +16,9 @@ import Intro from './page/Intro';
 import Wajib from './page/Wajib';
 import Pribadi from './page/Pribadi';
 import Profile from './page/Profile';
+
 import { colors } from './component/colors';
+
 const App = () => {
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),

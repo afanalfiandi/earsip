@@ -22,7 +22,6 @@ const auth = async (nip, password) => {
                 AsyncStorage.setItem('userSession', JSON.stringify(resp));
                 AsyncStorage.setItem('loggedIn', 'true');
                 RootNavigation.navigate('Home');
-
                 // console.log(await AsyncStorage.getItem('userSession'));
             } else {
                 ToastAndroid.show("NIP atau kata sandi salah", ToastAndroid.LONG);

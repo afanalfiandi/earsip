@@ -35,7 +35,7 @@ const Auth = () => {
                 </View>
             </Modal>
             <View style={styles.header}>
-                <Image source={require('../assets/img/icon-transparent-sm.png')} />
+                <Image style={{width: 55, height:55}} source={require('../assets/img/smk.png')} />
                 <Text style={[styles.text, { fontWeight: 'bold' }]}>E-ARSIP</Text>
             </View>
             <View style={styles.form}>
